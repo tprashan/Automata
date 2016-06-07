@@ -1,18 +1,16 @@
-var lodash = require('lodash');
-var dfaModule = {};
-module.exports = dfaModule;
+var _ = require('lodash');
+var dfaGenerator = {};
+module.exports = dfaGenerator;
 
 
-dfaModule.generateDFA = function (touples) {
-
+dfaGenerator.generateDFA = function (touples) {
 	return function(stringOfLanguage){
 				var setOfDigits = stringOfLanguage.split("").map(function(x){return Number(x);});
 				var initState = touples.initialState;
-				var returnFinalState = setOfDigits.reduce(function(preValue,currentValue){
-					var state = touples.transitionFunction[preValue][currentValue];
-					return state;
+				var returnFinalState = setOfDigits.reduce(function(currentState,currentValue){
+					return touples.transitionFunction[currentState][currentValue];
 				},initState);
-				return touples.finalState.indexOf(returnFinalState) > -1;
+				return _.includes(touples.finalState,returnFinalState);
 	}
 }
 
