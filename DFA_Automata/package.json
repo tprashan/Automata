@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dfaTest": "mocha dfa_tests/dfaTest.js",
-    "nfaTest": "mocha dfa_tests/nfaTest.js"
+    "dfaTest": "mocha tests/dfaTest.js",
+    "nfaTest": "mocha tests/nfaTest.js"
   },
   "author": "",
   "license": "ISC",

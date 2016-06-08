@@ -6,17 +6,28 @@ var varifyStringOfLanguage = function(stringOfLanguage){
 	return /^[0-1]+$/.test(stringOfLanguage);
 }
 
-nfaGenerator.generateNFA = function (touples) {
+var getAllState = function(tuples,currentStates,currentAlphabet){
+	return currentStates.map(function(state){
+		return tuples.transitionFunction[state][currentAlphabet];
+	});
+}
+
+var generateNFA_WithOutEpsilon = function(tuples,stringOfLanguage){
+	var resultState = stringOfLanguage.split("").reduce(function(currentStates,currentAlphabet){
+		return _.flatten(getAllState(tuples,currentStates,currentAlphabet));
+	},tuples.initialState);
+	return _.intersection(tuples.finalState,resultState).length > 0;
+}
+
+var generateNFA_WithEpsilon = function(tuples,stringOfLanguage){
+	return 1;
+}
+
+nfaGenerator.generateNFA = function (tuples) {
 	return function(stringOfLanguage){
 		if(!varifyStringOfLanguage(stringOfLanguage)) return false;
-		var resultState = stringOfLanguage.split("").reduce(function(currentState,currentAlphabet){
-			var getFinalState = currentState.map(function(state){
-				return touples.transitionFunction[state][currentAlphabet];
-			});
-			return _.flatten(getFinalState);
-
-		},touples.initialState);
-		return _.intersection(touples.finalState,resultState).length > 0;
+		if(!_.includes(tuples.setOfAlphabet,'ε')) return generateNFA_WithOutEpsilon(tuples,stringOfLanguage);
+		return generateNFA_WithEpsilon(tuples,stringOfLanguage);
 	}
 }
 

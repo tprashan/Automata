@@ -16,8 +16,9 @@ describe("NFA_generator ",function (){
 	  					'0' :["q3"],
 	  					'1' :[]
 	  				},
-	  			"q3" : { '0' : [],
-	  					 '1' : []
+	  			"q3" : { 
+	  					'0' : [],
+	  					'1' : []
 	  				}		
 	  		},
 	  		initialState : ["q1"],
@@ -47,6 +48,11 @@ describe("NFA_generator ",function (){
 	        assert.isTrue(getValidationOfString);
 	    });
 
+	    it('The NFA of 010110110011 should return false', function () {    
+	        var getValidationOfString = nfaStructure("010110110011");
+	        assert.isFalse(getValidationOfString);
+	    });
+
 	    it('The NFA of 1001 should return false', function () {    
 	        var getValidationOfString = nfaStructure("1001");
 	        assert.isFalse(getValidationOfString);
@@ -72,7 +78,7 @@ describe("NFA_generator ",function (){
 	describe('The language {w| w contains the substring 0101}', function () {
 	  	var touples = {
 	  		setOfState : ["q1","q2","q3","q4","q5"], 
-	  		setOfAlphabet : [0,1,'ε'],
+	  		setOfAlphabet : [0,1],
 	  		transitionFunction : {
 	  			"q1" : {
 	  					'0' : ["q1","q2"],
@@ -136,6 +142,6 @@ describe("NFA_generator ",function (){
 	        var getValidationOfString = nfaStructure("01000001010000001");
 	        assert.isTrue(getValidationOfString);
 	    });
+	});	
 
-	})
 })
