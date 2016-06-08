@@ -6,28 +6,29 @@ var varifyStringOfLanguage = function(stringOfLanguage){
 	return /^[0-1]+$/.test(stringOfLanguage);
 }
 
-var getAllState = function(tuples,currentStates,currentAlphabet){
-	return currentStates.map(function(state){
-		return tuples.transitionFunction[state][currentAlphabet];
-	});
+var getAllEpsilonState = function(tuples,state,currentAlphabet){
+	var resultEpsilonStates=[];
+	if(tuples.transitionFunction[state]['e']!= undefined){
+		resultEpsilonStates = (tuples.transitionFunction[state]['e'].map(function(epsilonState){
+			return tuples.transitionFunction[epsilonState][currentAlphabet] || epsilonState;
+		}));
+	}
+	if(tuples.transitionFunction[state][currentAlphabet])
+		resultEpsilonStates.push(tuples.transitionFunction[state][currentAlphabet]);
+
+	return resultEpsilonStates;
 }
 
-var generateNFA_WithOutEpsilon = function(tuples,stringOfLanguage){
-	var resultState = stringOfLanguage.split("").reduce(function(currentStates,currentAlphabet){
-		return _.flatten(getAllState(tuples,currentStates,currentAlphabet));
-	},tuples.initialState);
-	return _.intersection(tuples.finalState,resultState).length > 0;
-}
-
-var generateNFA_WithEpsilon = function(tuples,stringOfLanguage){
-	return 1;
-}
 
 nfaGenerator.generateNFA = function (tuples) {
 	return function(stringOfLanguage){
 		if(!varifyStringOfLanguage(stringOfLanguage)) return false;
-		if(!_.includes(tuples.setOfAlphabet,'ε')) return generateNFA_WithOutEpsilon(tuples,stringOfLanguage);
-		return generateNFA_WithEpsilon(tuples,stringOfLanguage);
+		var resultState = stringOfLanguage.split("").reduce(function(currentStates,currentAlphabet){
+			return _.flattenDeep(currentStates.map(function(state){
+				return getAllEpsilonState(tuples,state,currentAlphabet);
+			}));
+		},tuples.initialState)
+		return _.intersection(tuples.finalState,resultState).length > 0;
 	}
 }
 
