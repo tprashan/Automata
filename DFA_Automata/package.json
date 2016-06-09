@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "test"   : "mocha tests/*Test.js",
     "dfaTest": "mocha tests/dfaTest.js",
     "nfaTest": "mocha tests/nfaTest.js"
   },

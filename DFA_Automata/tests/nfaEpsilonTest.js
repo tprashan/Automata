@@ -31,14 +31,19 @@ describe("NFA_Generator_With_Epsilon",function(){
 	        assert.isTrue(getValidationOfString);
 	    });
 
+	    it('The NFA of 000 should return true', function () {    
+	        var getValidationOfString = nfaStructure("000");
+	        assert.isTrue(getValidationOfString);
+	    });
+
 	    it('The NFA of 0 should return true', function () {    
 	        var getValidationOfString = nfaStructure("0");
 	        assert.isTrue(getValidationOfString);
 	    });
 
-	    it('The NFA of 001 should return true', function () {    
+	    it('The NFA of 001 should return false', function () {    
 	        var getValidationOfString = nfaStructure("001");
-	        assert.isTrue(getValidationOfString);
+	        assert.isFalse(getValidationOfString);
 	    });
 
 	});
