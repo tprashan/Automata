@@ -2,17 +2,13 @@ var _ = require('lodash');
 var nfaGenerator = {};
 module.exports = nfaGenerator;
 
-var varifyStringOfLanguage = function(stringOfLanguage){
-	return /^[0-1]+$/.test(stringOfLanguage);
-}
 var getNewEpsilonStates = function(transitionFunction,states){
 	return _.flattenDeep(states.map(function(state){
-		if(transitionFunction[state] && transitionFunction[state]['e']) return (transitionFunction[state]['e']);
-		return [];
+		return (transitionFunction[state] && transitionFunction[state]['e']) ? [state,(transitionFunction[state]['e'])] : [];
 	}));
 }
 var getAllEpsilonStates = function(transitionFunction,states){
-	if(!Array.isArray(states)) states = _.filter([states],Boolean);
+	if(!Array.isArray(states)) states = [states];
 	var newEpsilonStates = getNewEpsilonStates(transitionFunction,states);
 	if(_.difference(newEpsilonStates, states).length ==  0 ) return newEpsilonStates;
 	var unionOfEpsilonStates = _.uniq(_.flattenDeep(_.union(states,newEpsilonStates)));
@@ -32,9 +28,9 @@ var getValidStateFromEpsilon = function(transitionFunction,allValidElipsonStates
 
 var getAllStateWithEpsilon = function(transitionFunction,state,currentAlphabet){
 	var validStates=[];var allValidElipsonStates=[];
-	validStates.push(getNextStateOfAlphabet(transitionFunction,state,currentAlphabet));	
+	validStates.push(getNextStateOfAlphabet(transitionFunction,state,currentAlphabet));
 	allValidElipsonStates.push(getAllEpsilonStates(transitionFunction,state));
-		return validStates.concat(getValidStateFromEpsilon(transitionFunction,allValidElipsonStates,currentAlphabet));	
+	return validStates.concat(getValidStateFromEpsilon(transitionFunction,allValidElipsonStates,currentAlphabet));	
 }
 
 var getFinalMachineStateByHandelFinalEpsilon = function(tuples,resultState){
@@ -50,7 +46,7 @@ nfaGenerator.generateNFA = function (tuples) {
 	return function(stringOfLanguage){
 		var resultState = stringOfLanguage.split("").reduce(function(currentStates,currentAlphabet){
 			return _.flattenDeep(currentStates.map(function(state){
-				return _.flattenDeep(getAllStateWithEpsilon(tuples.transitionFunction,state,currentAlphabet));
+				return getAllStateWithEpsilon(tuples.transitionFunction,state,currentAlphabet);
 			}));
 		},tuples.initialState);
 		var finalMachineStates = getFinalMachineStateByHandelFinalEpsilon(tuples,resultState);

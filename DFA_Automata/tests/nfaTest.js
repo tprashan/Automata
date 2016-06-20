@@ -14,8 +14,6 @@ describe("NFA_generator ",function (){
 	  				},
 	  			"q2" : {
 	  					'0' :["q3"]
-	  				},
-	  			"q3" : { 
 	  				}		
 	  		},
 	  		initialState : ["q1"],
