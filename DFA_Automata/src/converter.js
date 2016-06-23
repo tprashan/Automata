@@ -1,5 +1,6 @@
 var _ = require("lodash");
-var nfaGenerator = require('../src/nfa_generator');
+// var nfaGenerator = require('../src/nfa_generator');
+// var dfaGenerator = require('../src/dfa_generator');
 var converter = {};
 module.exports = converter;
 
@@ -27,7 +28,7 @@ converter.getInitialState = function(transitionFunction,states){
 converter.getAllFinalStates = function(nfaFinalState,allValidCombinationOfStates){
 	var allFinalStates = [];
 	nfaFinalState.forEach(function(finalState){
-		allValidCombinationOfStates.map(function(states){
+		allValidCombinationOfStates.forEach(function(states){
 			if(_.includes(states,finalState)) allFinalStates.push(states);
 		});
 	})
@@ -49,15 +50,72 @@ converter.getAllCombinationOfStates = function(setOfState){
 }
 
 
-converter.getNFAtoDFATransitionFunction = function(){
-	
+var getObjectReadyWithAlphabet = function(tuple){
+	var linkFromState = {};
+	tuple.setOfAlphabet.forEach(function(alpha){
+		linkFromState[alpha]=[];
+	});
+	return linkFromState;
+}
+
+var getAllLocationToReach = function(tuple,stateSet){
+	var linkFromState = getObjectReadyWithAlphabet(tuple);
+	tuple.setOfAlphabet.forEach(function(alphabet){
+		stateSet.forEach(function(state){
+			var currentState = tuple.transitionFunction[state];
+			if(currentState){
+				var epsilonState = getAllEpsilonStates(tuple.transitionFunction,currentState[alphabet]);
+				if(epsilonState.length>0) 
+					linkFromState[alphabet] = _.uniq(linkFromState[alphabet].concat(epsilonState)).sort();
+				linkFromState[alphabet] = _.uniq(linkFromState[alphabet].concat(currentState[alphabet] || [])).sort();
+			}
+		})
+	})
+	return linkFromState;
+}
+
+converter.getNFAtoDFATransitionFunction = function(tuple,allCombinationsOfStates){
+	var NFAtoDFATransitionFunction = {};
+	var allPossibleLink = allCombinationsOfStates.forEach(function(stateSet){
+		var allLocationToReach = getAllLocationToReach(tuple,stateSet);
+		NFAtoDFATransitionFunction[stateSet] = allLocationToReach;
+	});
+	return NFAtoDFATransitionFunction;
+}
+
+var getNfaToDfaTuple = function(tuples,NFAtoDFATransitionFunction,initialStateOfNFAtoDFA,finalStates){
+	return {
+				setOfState : tuples.setOfState,
+				setOfAlphabet : tuples.setOfAlphabet,
+				transitionFunction : NFAtoDFATransitionFunction,
+				initialState : initialStateOfNFAtoDFA,
+				finalState : finalStates
+			}
+}
+
+var generateDFA = function(tuples){
+	return function(stringOfLanguage){
+		console.log("tuples",tuples);
+				var returnFinalState = stringOfLanguage.split("").reduce(function(currentState,currentAlphabet){
+					// if(tuples.transitionFunction[currentState] == []) tuples.transitionFunction[currentState].concat("Ø");
+					return tuples.transitionFunction[currentState+""][currentAlphabet];
+				},tuples.initialState);
+				return _.includes(JSON.stringify(tuples.finalState),JSON.stringify(returnFinalState));
+	}
 }
 
 converter.convertNFAtoDFA = function(tuples){
+
 	return function(stringOfLanguage){
-		var allValidCombinationOfStates = getAllCombinaryationOfStates(tuples.setOfState);
-		var finalStates = getAllFinalStates(tuples.initialStates,allValidCombinationOfStates);
-		return 1;
+		// console.log(tuples);
+		var allValidCombinationOfStates = converter.getAllCombinationOfStates(tuples.setOfState).sort();
+		var finalStates = converter.getAllFinalStates(tuples.finalState,allValidCombinationOfStates);
+		var NFAtoDFATransitionFunction = converter.getNFAtoDFATransitionFunction(tuples,allValidCombinationOfStates);
+		var initialStateOfNFAtoDFA = converter.getInitialState(tuples.transitionFunction,tuples.initialState);
+		var nfaToDfaTuple = getNfaToDfaTuple(tuples,NFAtoDFATransitionFunction,initialStateOfNFAtoDFA,finalStates);
+		var dfaStructure = generateDFA(nfaToDfaTuple);
+
+		return dfaStructure(stringOfLanguage);
 	}
 }
 
