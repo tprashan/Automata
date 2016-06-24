@@ -1,0 +1,8 @@
+.DS_Store
+DFA_Automata/tests/tuples.js
+parser/node_modules/*
+parser/sentence/inputFile1.txt
+parser/sentence/inputFile2.txt
+parser/sentence/inputFile3.txt
+parser/sentence/inputFile4.txt
+parser/sentence/inputFile5.txt

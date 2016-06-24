@@ -72,12 +72,12 @@
   }
 */
 var myGrammer = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,6],$V1=[1,7],$V2=[4,11,12];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[4,7];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"PARAGRAPH":3,"EOF":4,"SENTENCES":5,"SENTENCE":6,"SUBJECT":7,"VERB":8,"DOT":9,"OBJECT":10,"NOUN":11,"PRONOUN":12,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"EOF",8:"VERB",9:"DOT",10:"OBJECT",11:"NOUN",12:"PRONOUN"},
-productions_: [0,[3,1],[3,2],[5,1],[5,2],[6,3],[6,4],[7,1],[7,1]],
+symbols_: {"error":2,"PARAGRAPH":3,"EOF":4,"SENTENCES":5,"SENTENCE":6,"NOUN":7,"VERB":8,"DOT":9,"OBJECT":10,"ADVERB":11,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"EOF",7:"NOUN",8:"VERB",9:"DOT",10:"OBJECT",11:"ADVERB"},
+productions_: [0,[3,1],[3,2],[5,1],[5,2],[6,3],[6,4],[6,4],[6,5],[6,5]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -90,27 +90,27 @@ case 2:
 return $$[$0-1];
 break;
 case 3:
-this.$ = [{'sentence': $$[$0]}]
+if($$[$0].ADVERB == 'also') return "semanticError" ;this.$ = [$$[$0]]
 break;
 case 4:
-this.$ = $$[$0-1].concat([{'sentence':$$[$0]}])
+this.$ = $$[$0-1].concat([$$[$0]])
 break;
 case 5:
-this.$ = [{'SUBJECT':$$[$0-2], 'VERB':$$[$0-1],'DOT':$$[$0]}]
+this.$ = {'SUBJECT':$$[$0-2], 'VERB':$$[$0-1],'DOT':$$[$0]}
 break;
 case 6:
-this.$ = [{'SUBJECT':$$[$0-3], 'VERB':$$[$0-2], 'OBJECT':$$[$0-1],'DOT':$$[$0]}]
+this.$ = {'SUBJECT':$$[$0-3], 'VERB':$$[$0-2],'OBJECT':$$[$0-1],'DOT':$$[$0]}
 break;
 case 7:
-this.$ = {'noun':$$[$0]}
+this.$ = {'SUBJECT':$$[$0-3], 'VERB':$$[$0-2], 'OBJECT':$$[$0-1],'DOT':$$[$0]}
 break;
-case 8:
-this.$ = {'pronoun':$$[$0]}
+case 8: case 9:
+this.$ = {'SUBJECT':$$[$0-4],'ADVERB':$$[$0-3] ,'VERB':$$[$0-2], 'OBJECT':$$[$0-1],'DOT':$$[$0]}
 break;
 }
 },
-table: [{3:1,4:[1,2],5:3,6:4,7:5,11:$V0,12:$V1},{1:[3]},{1:[2,1]},{4:[1,8],6:9,7:5,11:$V0,12:$V1},o($V2,[2,3]),{8:[1,10]},{8:[2,7]},{8:[2,8]},{1:[2,2]},o($V2,[2,4]),{9:[1,11],10:[1,12]},o($V2,[2,5]),{9:[1,13]},o($V2,[2,6])],
-defaultActions: {2:[2,1],6:[2,7],7:[2,8],8:[2,2]},
+table: [{3:1,4:[1,2],5:3,6:4,7:$V0},{1:[3]},{1:[2,1]},{4:[1,6],6:7,7:$V0},o($V1,[2,3]),{8:[1,8],11:[1,9]},{1:[2,2]},o($V1,[2,4]),{7:[1,11],9:[1,10],10:[1,12]},{8:[1,13]},o($V1,[2,5]),{9:[1,14]},{9:[1,15]},{7:[1,17],10:[1,16]},o($V1,[2,6]),o($V1,[2,7]),{9:[1,18]},{9:[1,19]},o($V1,[2,8]),o($V1,[2,9])],
+defaultActions: {2:[2,1],6:[2,2]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -591,22 +591,24 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:/* skip whitespace */
 break;
-case 1:return 11
+case 1:return 7
 break;
-case 2:return 12
+case 2:return 'PRONOUN'
 break;
-case 3:return 8
+case 3:return 11
 break;
-case 4:return 10
+case 4:return 8
 break;
-case 5:return 9
+case 5:return 10
 break;
-case 6:return 4
+case 6:return 9
+break;
+case 7:return 4
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:(Ram|Sita|Shyam))/,/^(?:(He|She|It))/,/^(?:(likes|hates|eats|runs))/,/^(?:(fruit|fast|tea|coffee|butter|cheese))/,/^(?:.)/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:(Ram|Sita|Shyam))/,/^(?:(He|She|It))/,/^(?:(also))/,/^(?:(likes|hates|eats|runs))/,/^(?:(fruit|fast|tea|coffee|butter|cheese|biscuits))/,/^(?:.)/,/^(?:$)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7],"inclusive":true}}
 });
 return lexer;
 })();
